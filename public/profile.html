@@ -1,1 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>User Profile</title>
+</head>
+<body>
 
+  <h1>👤 Your Profile</h1>
+  <p><strong>Name:</strong> <span id="userName"></span></p>
+  <p><strong>Email:</strong> <span id="userEmail"></span></p>
+
+  <button onclick="location.href='dashboard.html'">⬅️ Back to Dashboard</button>
+  <button onclick="logout()">🚪 Logout</button>
+
+  <script>
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+      alert("Not authenticated. Redirecting to login.");
+      window.location.href = '/index.html';
+    }
+
+    async function fetchProfile() {
+      try {
+        const res = await fetch('/api/profile', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          document.getElementById('userName').textContent = data.name;
+          document.getElementById('userEmail').textContent = data.email;
+        } else {
+          alert("Failed to fetch profile: " + data.message);
+        }
+      } catch (err) {
+        alert("Error loading profile");
+        console.error(err);
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem('token');
+      window.location.href = '/index.html';
+    }
+
+    fetchProfile();
+  </script>
+
+</body>
+</html>

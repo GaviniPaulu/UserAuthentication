@@ -1,1 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Email Verification</title>
+</head>
+<body>
+  <h1>🔐 Email Verification</h1>
+  <p id="message">Verifying your email...</p>
 
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+
+    if (!token) {
+      document.getElementById('message').textContent = "❌ Invalid or missing token";
+    } else {
+      fetch(`/api/verify-email?token=${token}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            document.getElementById('message').textContent = "✅ Email verified successfully!";
+          } else {
+            document.getElementById('message').textContent = "❌ Verification failed: " + data.message;
+          }
+        })
+        .catch(err => {
+          console.error("Verify error:", err);
+          document.getElementById('message').textContent = "❌ An error occurred";
+        });
+    }
+  </script>
+</body>
+</html>
